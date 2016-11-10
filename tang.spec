@@ -1,5 +1,5 @@
 Name:           tang
-Version:        3
+Version:        4
 Release:        1%{?dist}
 Summary:        Network Presence Binding Daemon
 
@@ -23,6 +23,8 @@ BuildRequires:  coreutils
 BuildRequires:  grep
 BuildRequires:  sed
 
+BuildRequires:  nagios-common
+
 %{?systemd_requires}
 Requires:       coreutils
 Requires:       jose >= 5
@@ -33,6 +35,13 @@ Requires(pre):  shadow-utils
 
 %description
 Tang is a small daemon for binding data to the presence of a third party.
+
+%package nagios
+Summary: Nagios plugin for testing Tang Daemon
+Requires: nagios-common
+
+%description nagios
+This package provides a Nagios plugin used to test the Tang Network Presence Binding Daemon.
 
 %prep
 %setup -q
@@ -87,7 +96,15 @@ exit 0
 %{_libexecdir}/%{name}d-update
 %{_libexecdir}/%{name}d
 
+%files nagios
+%license COPYING
+%{_libdir}/nagios/plugins/%{name}
+
 %changelog
+* Thu Nov 10 2016 Nathaniel McCallum <npmccallum@redhat.com> - 4-1
+- New upstream release
+- Add nagios subpackage
+
 * Wed Oct 26 2016 Nathaniel McCallum <npmccallum@redhat.com> - 3-1
 - New upstream release
 
