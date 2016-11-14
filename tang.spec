@@ -1,6 +1,6 @@
 Name:           tang
 Version:        4
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Network Presence Binding Daemon
 
 License:        GPLv3+
@@ -61,6 +61,7 @@ echo "User=%{name}" >> $RPM_BUILD_ROOT/%{_unitdir}/%{name}d@.service
 %{__mkdir_p} $RPM_BUILD_ROOT/%{_localstatedir}/db/%{name}
 
 %check
+%{__sed} -i 's|\./tang -u|sleep 0.5; ./tang -u|' ./test-nagios
 if ! make %{?_smp_mflags} check; then
     cat test-suite.log
     false
@@ -101,6 +102,9 @@ exit 0
 %{_libdir}/nagios/plugins/%{name}
 
 %changelog
+* Mon Nov 14 2016 Nathaniel McCallum <npmccallum@redhat.com> - 4-2
+- Fix a race condition in one of the tests
+
 * Thu Nov 10 2016 Nathaniel McCallum <npmccallum@redhat.com> - 4-1
 - New upstream release
 - Add nagios subpackage
