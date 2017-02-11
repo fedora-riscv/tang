@@ -1,6 +1,6 @@
 Name:           tang
 Version:        4
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Network Presence Binding Daemon
 
 License:        GPLv3+
@@ -102,6 +102,9 @@ exit 0
 %{_libdir}/nagios/plugins/%{name}
 
 %changelog
+* Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 4-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
+
 * Mon Nov 14 2016 Nathaniel McCallum <npmccallum@redhat.com> - 4-2
 - Fix a race condition in one of the tests
 
