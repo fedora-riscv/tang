@@ -1,6 +1,6 @@
 Name:           tang
-Version:        4
-Release:        3%{?dist}
+Version:        5
+Release:        1%{?dist}
 Summary:        Network Presence Binding Daemon
 
 License:        GPLv3+
@@ -61,7 +61,6 @@ echo "User=%{name}" >> $RPM_BUILD_ROOT/%{_unitdir}/%{name}d@.service
 %{__mkdir_p} $RPM_BUILD_ROOT/%{_localstatedir}/db/%{name}
 
 %check
-%{__sed} -i 's|\./tang -u|sleep 0.5; ./tang -u|' ./test-nagios
 if ! make %{?_smp_mflags} check; then
     cat test-suite.log
     false
@@ -77,31 +76,44 @@ exit 0
 %post
 %systemd_post %{name}d.socket
 %systemd_post %{name}d-update.path
+%systemd_post %{name}d-update.service
+%systemd_post %{name}d-keygen.service
 
 %preun
 %systemd_preun %{name}d.socket
 %systemd_preun %{name}d-update.path
+%systemd_preun %{name}d-update.service
+%systemd_preun %{name}d-keygen.service
 
 %postun
 %systemd_postun_with_restart %{name}d.socket
 %systemd_postun_with_restart %{name}d-update.path
+%systemd_postun_with_restart %{name}d-update.service
+%systemd_postun_with_restart %{name}d-keygen.service
 
 %files
 %license COPYING
 %attr(0750, %{name}, %{name}) %{_localstatedir}/cache/%{name}
 %attr(2570, %{name}, %{name}) %{_localstatedir}/db/%{name}
+%{_unitdir}/%{name}d-keygen.service
 %{_unitdir}/%{name}d-update.service
 %{_unitdir}/%{name}d-update.path
 %{_unitdir}/%{name}d@.service
 %{_unitdir}/%{name}d.socket
+%{_libexecdir}/%{name}d-keygen
 %{_libexecdir}/%{name}d-update
 %{_libexecdir}/%{name}d
+%{_mandir}/man8/tang.8*
 
 %files nagios
 %license COPYING
 %{_libdir}/nagios/plugins/%{name}
+%{_mandir}/man1/tang-nagios.1*
 
 %changelog
+* Wed Jun 14 2017 Nathaniel McCallum <npmccallum@redhat.com> - 5-1
+- New upstream release
+
 * Sat Feb 11 2017 Fedora Release Engineering <releng@fedoraproject.org> - 4-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
