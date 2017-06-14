@@ -1,23 +1,23 @@
 Name:           tang
 Version:        5
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Network Presence Binding Daemon
 
 License:        GPLv3+
 URL:            https://github.com/latchset/%{name}
 Source0:        https://github.com/latchset/%{name}/releases/download/v%{version}/%{name}-%{version}.tar.bz2
 
-BuildRequires:  jose >= 5
-BuildRequires:  libjose-devel >= 5
-BuildRequires:  libjose-zlib-devel >= 5
-BuildRequires:  libjose-openssl-devel >= 5
+BuildRequires:  jose >= 8
+BuildRequires:  libjose-devel >= 8
+BuildRequires:  libjose-zlib-devel >= 8
+BuildRequires:  libjose-openssl-devel >= 8
 
 BuildRequires:  http-parser-devel >= 2.7.1-3
 BuildRequires:  systemd-devel
 BuildRequires:  pkgconfig
 
 BuildRequires:  systemd
-BuildRequires:  wget
+BuildRequires:  curl
 
 BuildRequires:  coreutils
 BuildRequires:  grep
@@ -27,7 +27,7 @@ BuildRequires:  nagios-common
 
 %{?systemd_requires}
 Requires:       coreutils
-Requires:       jose >= 5
+Requires:       jose >= 8
 Requires:       grep
 Requires:       sed
 
@@ -111,6 +111,9 @@ exit 0
 %{_mandir}/man1/tang-nagios.1*
 
 %changelog
+* Wed Jun 14 2017 Nathaniel McCallum <npmccallum@redhat.com> - 5-2
+- Fix incorrect dependencies
+
 * Wed Jun 14 2017 Nathaniel McCallum <npmccallum@redhat.com> - 5-1
 - New upstream release
 
