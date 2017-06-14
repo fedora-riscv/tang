@@ -1,6 +1,6 @@
 Name:           tang
-Version:        5
-Release:        2%{?dist}
+Version:        6
+Release:        1%{?dist}
 Summary:        Network Presence Binding Daemon
 
 License:        GPLv3+
@@ -111,6 +111,9 @@ exit 0
 %{_mandir}/man1/tang-nagios.1*
 
 %changelog
+* Wed Jun 14 2017 Nathaniel McCallum <npmccallum@redhat.com> - 6-1
+- New upstream release
+
 * Wed Jun 14 2017 Nathaniel McCallum <npmccallum@redhat.com> - 5-2
 - Fix incorrect dependencies
 
