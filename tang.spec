@@ -1,6 +1,6 @@
 Name:           tang
 Version:        6
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Network Presence Binding Daemon
 
 License:        GPLv3+
@@ -111,6 +111,9 @@ exit 0
 %{_mandir}/man1/tang-nagios.1*
 
 %changelog
+* Thu Jul 27 2017 Fedora Release Engineering <releng@fedoraproject.org> - 6-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
+
 * Wed Jun 14 2017 Nathaniel McCallum <npmccallum@redhat.com> - 6-1
 - New upstream release
 
