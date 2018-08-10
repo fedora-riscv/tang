@@ -1,6 +1,6 @@
 Name:           tang
-Version:        6
-Release:        5%{?dist}
+Version:        7
+Release:        1%{?dist}
 Summary:        Network Presence Binding Daemon
 
 License:        GPLv3+
@@ -20,11 +20,10 @@ BuildRequires:  pkgconfig
 BuildRequires:  systemd
 BuildRequires:  curl
 
+BuildRequires:  asciidoc
 BuildRequires:  coreutils
 BuildRequires:  grep
 BuildRequires:  sed
-
-BuildRequires:  nagios-common
 
 %{?systemd_requires}
 Requires:       coreutils
@@ -36,13 +35,6 @@ Requires(pre):  shadow-utils
 
 %description
 Tang is a small daemon for binding data to the presence of a third party.
-
-%package nagios
-Summary: Nagios plugin for testing Tang Daemon
-Requires: nagios-common
-
-%description nagios
-This package provides a Nagios plugin used to test the Tang Network Presence Binding Daemon.
 
 %prep
 %setup -q
@@ -105,13 +97,14 @@ exit 0
 %{_libexecdir}/%{name}d-update
 %{_libexecdir}/%{name}d
 %{_mandir}/man8/tang.8*
-
-%files nagios
-%license COPYING
-%{_libdir}/nagios/plugins/%{name}
-%{_mandir}/man1/tang-nagios.1*
+%{_bindir}/%{name}-show-keys
+%{_mandir}/man1/tang-show-keys.1*
 
 %changelog
+* Fri Aug 10 2018 Nathaniel McCallum <npmccallum@redhat.com> - 7-1
+- New upstream release
+- Retire tang-nagios package (now separate upstream)
+
 * Sat Jul 14 2018 Fedora Release Engineering <releng@fedoraproject.org> - 6-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 
