@@ -1,6 +1,6 @@
 Name:           tang
 Version:        7
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Network Presence Binding Daemon
 
 License:        GPLv3+
@@ -8,6 +8,7 @@ URL:            https://github.com/latchset/%{name}
 Source0:        https://github.com/latchset/%{name}/releases/download/v%{version}/%{name}-%{version}.tar.bz2
 
 BuildRequires:  gcc
+BuildRequires:  make
 BuildRequires:  jose >= 8
 BuildRequires:  libjose-devel >= 8
 BuildRequires:  libjose-zlib-devel >= 8
@@ -101,6 +102,9 @@ exit 0
 %{_mandir}/man1/tang-show-keys.1*
 
 %changelog
+* Wed Mar 18 2020 Sergio Correia <scorreia@redhat.com> - 7-4
+- Rebuilt after http-parser update
+
 * Sat Jul 27 2019 Fedora Release Engineering <releng@fedoraproject.org> - 7-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
 
