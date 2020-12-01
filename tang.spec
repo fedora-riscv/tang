@@ -1,13 +1,18 @@
 Name:           tang
 Version:        7
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Network Presence Binding Daemon
 
 License:        GPLv3+
 URL:            https://github.com/latchset/%{name}
 Source0:        https://github.com/latchset/%{name}/releases/download/v%{version}/%{name}-%{version}.tar.bz2
 
+Patch0001: 0001-Move-build-system-to-meson.patch
+Patch0002: 0002-Move-key-handling-to-tang-itself.patch
+
 BuildRequires:  gcc
+BuildRequires:  meson
+BuildRequires:  git-core
 BuildRequires:  jose >= 8
 BuildRequires:  libjose-devel >= 8
 BuildRequires:  libjose-zlib-devel >= 8
@@ -37,27 +42,19 @@ Requires(pre):  shadow-utils
 Tang is a small daemon for binding data to the presence of a third party.
 
 %prep
-%setup -q
+%autosetup -S git
 
 %build
-%configure
-make %{?_smp_mflags} V=1
+%meson
+%meson_build
 
 %install
-rm -rf $RPM_BUILD_ROOT
-%make_install
-%{__sed} -i 's|DirectoryMode=0700||' $RPM_BUILD_ROOT/%{_unitdir}/%{name}d-update.path
-%{__sed} -i 's|MakeDirectory=true||' $RPM_BUILD_ROOT/%{_unitdir}/%{name}d-update.path
-echo "User=%{name}" >> $RPM_BUILD_ROOT/%{_unitdir}/%{name}d-update.service
+%meson_install
 echo "User=%{name}" >> $RPM_BUILD_ROOT/%{_unitdir}/%{name}d@.service
-%{__mkdir_p} $RPM_BUILD_ROOT/%{_localstatedir}/cache/%{name}
 %{__mkdir_p} $RPM_BUILD_ROOT/%{_localstatedir}/db/%{name}
 
 %check
-if ! make %{?_smp_mflags} check; then
-    cat test-suite.log
-    false
-fi
+%meson_test
 
 %pre
 getent group %{name} >/dev/null || groupadd -r %{name}
@@ -68,39 +65,31 @@ exit 0
 
 %post
 %systemd_post %{name}d.socket
-%systemd_post %{name}d-update.path
-%systemd_post %{name}d-update.service
-%systemd_post %{name}d-keygen.service
 
 %preun
 %systemd_preun %{name}d.socket
-%systemd_preun %{name}d-update.path
-%systemd_preun %{name}d-update.service
-%systemd_preun %{name}d-keygen.service
 
 %postun
 %systemd_postun_with_restart %{name}d.socket
-%systemd_postun_with_restart %{name}d-update.path
-%systemd_postun_with_restart %{name}d-update.service
-%systemd_postun_with_restart %{name}d-keygen.service
 
 %files
 %license COPYING
-%attr(0750, %{name}, %{name}) %{_localstatedir}/cache/%{name}
-%attr(2570, %{name}, %{name}) %{_localstatedir}/db/%{name}
-%{_unitdir}/%{name}d-keygen.service
-%{_unitdir}/%{name}d-update.service
-%{_unitdir}/%{name}d-update.path
+%attr(0700, %{name}, %{name}) %{_localstatedir}/db/%{name}
 %{_unitdir}/%{name}d@.service
 %{_unitdir}/%{name}d.socket
 %{_libexecdir}/%{name}d-keygen
-%{_libexecdir}/%{name}d-update
 %{_libexecdir}/%{name}d
 %{_mandir}/man8/tang.8*
 %{_bindir}/%{name}-show-keys
 %{_mandir}/man1/tang-show-keys.1*
 
 %changelog
+* Tue Dec 1 2020 Sergio Correia <scorreia@redhat.com> - 7.6
+- Move build system to meson
+  Upstream commits (fed9020, 590de27)
+- Move key handling to tang itself
+  Upstream commits (6090505, c71df1d, 7119454)
+
 * Tue Feb 25 2020 Sergio Correia <scorreia@redhat.com> - 7-5
 - Rebuilt after http-parser update
 
