@@ -1,6 +1,6 @@
 Name:           tang
 Version:        7
-Release:        8%{?dist}
+Release:        9%{?dist}
 Summary:        Network Presence Binding Daemon
 
 License:        GPLv3+
@@ -84,6 +84,9 @@ exit 0
 %{_mandir}/man1/tang-show-keys.1*
 
 %changelog
+* Wed Jan 27 2021 Fedora Release Engineering <releng@fedoraproject.org> - 7-9
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
+
 * Tue Dec 1 2020 Sergio Correia <scorreia@redhat.com> - 7.8
 - Move build system to meson
   Upstream commits (fed9020, 590de27)
