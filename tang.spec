@@ -1,14 +1,11 @@
 Name:           tang
-Version:        7
-Release:        9%{?dist}
+Version:        8
+Release:        1%{?dist}
 Summary:        Network Presence Binding Daemon
 
 License:        GPLv3+
 URL:            https://github.com/latchset/%{name}
-Source0:        https://github.com/latchset/%{name}/releases/download/v%{version}/%{name}-%{version}.tar.bz2
-
-Patch0001: 0001-Move-build-system-to-meson.patch
-Patch0002: 0002-Move-key-handling-to-tang-itself.patch
+Source0:        https://github.com/latchset/%{name}/releases/download/v%{version}/%{name}-%{version}.tar.xz
 
 BuildRequires:  gcc
 BuildRequires:  meson
@@ -84,6 +81,9 @@ exit 0
 %{_mandir}/man1/tang-show-keys.1*
 
 %changelog
+* Mon Feb 08 2021 Sergio Correia <scorreia@redhat.com> - 8-1
+- New upstream release - v8.
+
 * Wed Jan 27 2021 Fedora Release Engineering <releng@fedoraproject.org> - 7-9
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
 
