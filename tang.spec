@@ -1,14 +1,11 @@
 Name:           tang
-Version:        7
-Release:        8%{?dist}
+Version:        8
+Release:        1%{?dist}
 Summary:        Network Presence Binding Daemon
 
 License:        GPLv3+
 URL:            https://github.com/latchset/%{name}
-Source0:        https://github.com/latchset/%{name}/releases/download/v%{version}/%{name}-%{version}.tar.bz2
-
-Patch0001: 0001-Move-build-system-to-meson.patch
-Patch0002: 0002-Move-key-handling-to-tang-itself.patch
+Source0:        https://github.com/latchset/%{name}/releases/download/v%{version}/%{name}-%{version}.tar.xz
 
 BuildRequires:  gcc
 BuildRequires:  meson
@@ -84,6 +81,9 @@ exit 0
 %{_mandir}/man1/tang-show-keys.1*
 
 %changelog
+* Tue Feb 09 2021 Sergio Correia <scorreia@redhat.com> - 8-1
+- Update to new tang upstream release, v8.
+
 * Tue Dec 1 2020 Sergio Correia <scorreia@redhat.com> - 7.8
 - Move build system to meson
   Upstream commits (fed9020, 590de27)
