@@ -1,6 +1,6 @@
 Name:           tang
 Version:        8
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Network Presence Binding Daemon
 
 License:        GPLv3+
@@ -81,6 +81,10 @@ exit 0
 %{_mandir}/man1/tang-show-keys.1*
 
 %changelog
+* Tue Mar 02 2021 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 8-3
+- Rebuilt for updated systemd-rpm-macros
+  See https://pagure.io/fesco/issue/2583.
+
 * Tue Feb 09 2021 Sergio Correia <scorreia@redhat.com> - 8-2
 - Remove extra patches as they are already included in v8 release
 
