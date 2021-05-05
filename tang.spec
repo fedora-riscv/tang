@@ -1,5 +1,5 @@
 Name:           tang
-Version:        8
+Version:        10
 Release:        1%{?dist}
 Summary:        Network Presence Binding Daemon
 
@@ -25,6 +25,7 @@ BuildRequires:  curl
 BuildRequires:  asciidoc
 BuildRequires:  coreutils
 BuildRequires:  grep
+BuildRequires:  socat
 BuildRequires:  sed
 
 %{?systemd_requires}
@@ -75,12 +76,16 @@ exit 0
 %{_unitdir}/%{name}d@.service
 %{_unitdir}/%{name}d.socket
 %{_libexecdir}/%{name}d-keygen
+%{_libexecdir}/%{name}d-rotate-keys
 %{_libexecdir}/%{name}d
 %{_mandir}/man8/tang.8*
 %{_bindir}/%{name}-show-keys
 %{_mandir}/man1/tang-show-keys.1*
 
 %changelog
+* Wed May 05 2021 Sergio Correia <scorreia@redhat.com> - 10-1
+- New upstream release - v10.
+
 * Tue Feb 09 2021 Sergio Correia <scorreia@redhat.com> - 8-1
 - Update to new tang upstream release, v8.
 
