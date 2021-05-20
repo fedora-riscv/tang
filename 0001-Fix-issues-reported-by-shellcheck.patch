@@ -1,0 +1,155 @@
+From 0b0b1ef7244433cde737cd65d07930efd9667ed1 Mon Sep 17 00:00:00 2001
+From: Sergio Correia <scorreia@redhat.com>
+Date: Thu, 20 May 2021 10:21:21 -0300
+Subject: [PATCH 1/2] Fix issues reported by shellcheck
+
+Additionally, improve testing of these scripts.
+---
+ src/tang-show-keys    |  5 ++---
+ src/tangd-keygen      | 17 ++++++++++-------
+ src/tangd-rotate-keys |  6 +++---
+ tests/adv             | 20 ++++++++++++++++++++
+ tests/helpers         | 15 +++++++++++++++
+ 5 files changed, 50 insertions(+), 13 deletions(-)
+
+diff --git a/src/tang-show-keys b/src/tang-show-keys
+index 689e4df..0c33c3a 100755
+--- a/src/tang-show-keys
++++ b/src/tang-show-keys
+@@ -27,10 +27,9 @@ fi
+ 
+ port=${1-80}
+ 
+-adv=$(curl -sSf localhost:$port/adv)
++adv=$(curl -sSf "localhost:$port/adv")
+ 
+ THP_DEFAULT_HASH=S256    # SHA-256.
+-echo $adv \
+-    | jose fmt -j- -g payload -y -o- \
++jose fmt --json "${adv}" -g payload -y -o- \
+     | jose jwk use -i- -r -u verify -o- \
+     | jose jwk thp -i- -a "${THP_DEFAULT_HASH}"
+diff --git a/src/tangd-keygen b/src/tangd-keygen
+index 7a9adaf..f37121f 100755
+--- a/src/tangd-keygen
++++ b/src/tangd-keygen
+@@ -18,20 +18,23 @@
+ # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ #
+ 
+-trap 'exit' ERR
++set -e
+ 
+-if [ $# -ne 1 -a $# -ne 3 ] || [ ! -d "$1" ]; then
++usage() {
+     echo "Usage: $0 <jwkdir> [<sig> <exc>]" >&2
+     exit 1
+-fi
++}
++
++[ $# -ne 1 ] && [ $# -ne 3 ] && usage
++[ -d "$1" ] || usage
+ 
+ [ $# -eq 3 ] && sig=$2 && exc=$3
+ 
+ THP_DEFAULT_HASH=S256     # SHA-256.
+-jwe=`jose jwk gen -i '{"alg":"ES512"}'`
++jwe=$(jose jwk gen -i '{"alg":"ES512"}')
+ [ -z "$sig" ] && sig=$(echo "$jwe" | jose jwk thp -i- -a "${THP_DEFAULT_HASH}")
+-echo "$jwe" > $1/$sig.jwk
++echo "$jwe" > "$1/$sig.jwk"
+ 
+-jwe=`jose jwk gen -i '{"alg":"ECMR"}'`
++jwe=$(jose jwk gen -i '{"alg":"ECMR"}')
+ [ -z "$exc" ] && exc=$(echo "$jwe" | jose jwk thp -i- -a "${THP_DEFAULT_HASH}")
+-echo "$jwe" > $1/$exc.jwk
++echo "$jwe" > "$1/$exc.jwk"
+diff --git a/src/tangd-rotate-keys b/src/tangd-rotate-keys
+index 9d38bb5..a095a91 100755
+--- a/src/tangd-rotate-keys
++++ b/src/tangd-rotate-keys
+@@ -21,7 +21,7 @@
+ SUMMARY="Perform rotation of tang keys"
+ 
+ usage() {
+-    local _ret="${1:-1}"
++    _ret="${1:-1}"
+     exec >&2
+     echo "Usage: ${0} [-h] [-v] -d <KEYDIR>"
+     echo
+@@ -37,8 +37,8 @@ usage() {
+ }
+ 
+ log() {
+-    local _msg="${1}"
+-    local _verbose="${2:-}"
++    _msg="${1}"
++    _verbose="${2:-}"
+     [ -z "${_verbose}" ] && return 0
+     echo "${_msg}" >&2
+ }
+diff --git a/tests/adv b/tests/adv
+index 490d4d1..4c8bc97 100755
+--- a/tests/adv
++++ b/tests/adv
+@@ -93,6 +93,9 @@ fetch /adv
+ # Lets's now test with multiple pairs of keys.
+ for i in 1 2 3 4 5 6 7 8 9; do
+     tangd-keygen "${TMP}"/db other-sig-${i} other-exc-${i}
++    # Make sure the requested keys exist and are valid.
++    validate_sig "${TMP}/db/other-sig-${i}.jwk"
++    validate_exc "${TMP}/db/other-exc-${i}.jwk"
+ done
+ 
+ # Verify the advertisement is correct.
+@@ -104,3 +107,20 @@ for jwk in "${TMP}"/db/other-sig-*.jwk; do
+         fetch /adv/"$(jose jwk thp -a "${alg}" -i "${jwk}")" | ver "${jwk}"
+     done
+ done
++
++# Now let's test keys rotation.
++tangd-rotate-keys -d "${TMP}/db"
++for i in 1 2 3 4 5 6 7 8 9; do
++    # Make sure keys were excluded from advertisement.
++    validate_sig "${TMP}/db/.other-sig-${i}.jwk"
++    validate_exc "${TMP}/db/.other-exc-${i}.jwk"
++done
++
++# And test also that we have valid keys after rotation.
++thp=
++for jwk in "${TMP}"/db/*.jwk; do
++    validate_sig "${jwk}" && thp="$(jose jwk thp -a "${THP_DEFAULT_HASH}" \
++                                    -i "${jwk}")"
++done
++[ -z "${thp}" ] && die "There should be valid keys after rotation"
++test "$(tang-show-keys $PORT)" = "${thp}"
+diff --git a/tests/helpers b/tests/helpers
+index af122ab..7ce54d7 100755
+--- a/tests/helpers
++++ b/tests/helpers
+@@ -56,7 +56,22 @@ validate() {
+     fi
+ }
+ 
++validate_sig() {
++    jose fmt --json "${1}" --output=- | jose jwk use --input=- --required \
++        --use verify 2>/dev/null
++}
++
++validate_exc() {
++    jose fmt --json "${1}" --output=- | jose jwk use --input=- --required \
++        --use deriveKey 2>/dev/null
++}
++
+ sanity_check() {
+     # Skip test if socat is not available.
+     [ -n "${SOCAT}" ] || exit 77
+ }
++
++die() {
++    echo "${1}" >&2
++    exit 1
++}
+-- 
+2.31.1
+
