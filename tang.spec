@@ -1,11 +1,14 @@
 Name:           tang
 Version:        10
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Network Presence Binding Daemon
 
 License:        GPLv3+
 URL:            https://github.com/latchset/%{name}
 Source0:        https://github.com/latchset/%{name}/releases/download/v%{version}/%{name}-%{version}.tar.xz
+
+Patch0001: 0001-Fix-issues-reported-by-shellcheck.patch
+Patch0002: 0002-Fix-possible-NULL-pointer-dereference-in-find_by_thp.patch
 
 BuildRequires:  gcc
 BuildRequires:  meson
@@ -83,6 +86,10 @@ exit 0
 %{_mandir}/man1/tang-show-keys.1*
 
 %changelog
+* Thu May 20 2021 Sergio Correia <scorreia@redhat.com> - 10-2
+- Fix issues reported by shellcheck and a possible NULL pointer
+  dereference reported by gcc static analyzer (3d770c6, 262d98f)
+
 * Wed May 05 2021 Sergio Correia <scorreia@redhat.com> - 10-1
 - New upstream release - v10.
 
