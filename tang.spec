@@ -1,6 +1,6 @@
 Name:           tang
 Version:        10
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Network Presence Binding Daemon
 
 License:        GPLv3+
@@ -86,6 +86,9 @@ exit 0
 %{_mandir}/man1/tang-show-keys.1*
 
 %changelog
+* Fri Jul 23 2021 Fedora Release Engineering <releng@fedoraproject.org> - 10-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
+
 * Thu May 20 2021 Sergio Correia <scorreia@redhat.com> - 10-2
 - Fix issues reported by shellcheck and a possible NULL pointer
   dereference reported by gcc static analyzer (3d770c6, 262d98f)
