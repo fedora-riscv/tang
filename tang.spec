@@ -1,6 +1,6 @@
 Name:           tang
 Version:        10
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Network Presence Binding Daemon
 
 License:        GPLv3+
@@ -9,6 +9,8 @@ Source0:        https://github.com/latchset/%{name}/releases/download/v%{version
 
 Patch0001: 0001-Fix-issues-reported-by-shellcheck.patch
 Patch0002: 0002-Fix-possible-NULL-pointer-dereference-in-find_by_thp.patch
+Patch0003: 0003-keys-make-sure-keys-are-created-with-0440-mode.patch
+Patch0004: 0004-Specify-user-and-group-for-tang.patch
 
 BuildRequires:  gcc
 BuildRequires:  meson
@@ -51,7 +53,6 @@ Tang is a small daemon for binding data to the presence of a third party.
 
 %install
 %meson_install
-echo "User=%{name}" >> $RPM_BUILD_ROOT/%{_unitdir}/%{name}d@.service
 %{__mkdir_p} $RPM_BUILD_ROOT/%{_localstatedir}/db/%{name}
 
 %check
@@ -66,6 +67,18 @@ exit 0
 
 %post
 %systemd_post %{name}d.socket
+
+# Let's make sure any existing keys are readable only
+# by the owner/group.
+if [ -d /var/db/tang ]; then
+    for k in /var/db/tang/*.jwk; do
+        chmod 0440 -- "${k}"
+    done
+    for k in /var/db/tang/.*.jwk; do
+        chmod 0440 -- "${k}"
+    done
+    chown tang:tang -R /var/db/tang
+fi
 
 %preun
 %systemd_preun %{name}d.socket
@@ -86,6 +99,10 @@ exit 0
 %{_mandir}/man1/tang-show-keys.1*
 
 %changelog
+* Mon Oct 04 2021 Sergio Correia <scorreia@redhat.com> - 10-4
+- Keys are created with 0440 mode
+  Resolves rhbz#2008204
+
 * Fri Jul 23 2021 Fedora Release Engineering <releng@fedoraproject.org> - 10-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
 
