@@ -1,6 +1,6 @@
 Name:           tang
 Version:        10
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Network Presence Binding Daemon
 
 License:        GPLv3+
@@ -72,9 +72,11 @@ exit 0
 # by the owner/group.
 if [ -d /var/db/tang ]; then
     for k in /var/db/tang/*.jwk; do
+        test -e "${k}" || continue
         chmod 0440 -- "${k}"
     done
     for k in /var/db/tang/.*.jwk; do
+        test -e "${k}" || continue
         chmod 0440 -- "${k}"
     done
     chown tang:tang -R /var/db/tang
@@ -99,6 +101,9 @@ fi
 %{_mandir}/man1/tang-show-keys.1*
 
 %changelog
+* Mon Oct 04 2021 Sergio Arroutbi <sarroutb@redhat.com> - 10-5
+- Fix scriptlet from previous commit
+
 * Mon Oct 04 2021 Sergio Correia <scorreia@redhat.com> - 10-4
 - Keys are created with 0440 mode
   Resolves rhbz#2008204
