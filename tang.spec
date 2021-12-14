@@ -1,16 +1,11 @@
 Name:           tang
-Version:        10
-Release:        5%{?dist}
+Version:        11
+Release:        1%{?dist}
 Summary:        Network Presence Binding Daemon
 
 License:        GPLv3+
 URL:            https://github.com/latchset/%{name}
 Source0:        https://github.com/latchset/%{name}/releases/download/v%{version}/%{name}-%{version}.tar.xz
-
-Patch0001: 0001-Fix-issues-reported-by-shellcheck.patch
-Patch0002: 0002-Fix-possible-NULL-pointer-dereference-in-find_by_thp.patch
-Patch0003: 0003-keys-make-sure-keys-are-created-with-0440-mode.patch
-Patch0004: 0004-Specify-user-and-group-for-tang.patch
 
 BuildRequires:  gcc
 BuildRequires:  meson
@@ -99,8 +94,13 @@ fi
 %{_mandir}/man8/tang.8*
 %{_bindir}/%{name}-show-keys
 %{_mandir}/man1/tang-show-keys.1*
+%{_mandir}/man1/tangd-rotate-keys.1.*
 
 %changelog
+* Tue Dec 14 2021 Sergio Correia <scorreia@redhat.com> - 11-1
+- New upstream release - v11.
+  Resolves: CVE-2021-4076
+
 * Mon Oct 04 2021 Sergio Arroutbi <sarroutb@redhat.com> - 10-5
 - Fix scriptlet from previous commit
 
