@@ -1,6 +1,6 @@
 Name:           tang
 Version:        11
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Network Presence Binding Daemon
 
 License:        GPLv3+
@@ -97,6 +97,9 @@ fi
 %{_mandir}/man1/tangd-rotate-keys.1.*
 
 %changelog
+* Sat Jan 22 2022 Fedora Release Engineering <releng@fedoraproject.org> - 11-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
+
 * Tue Dec 14 2021 Sergio Correia <scorreia@redhat.com> - 11-1
 - New upstream release - v11.
   Resolves: CVE-2021-4076
