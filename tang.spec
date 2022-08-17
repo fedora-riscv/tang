@@ -1,11 +1,12 @@
 Name:           tang
 Version:        11
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Network Presence Binding Daemon
 
 License:        GPLv3+
 URL:            https://github.com/latchset/%{name}
 Source0:        https://github.com/latchset/%{name}/releases/download/v%{version}/%{name}-%{version}.tar.xz
+Source1:        tang.sysusers
 
 BuildRequires:  gcc
 BuildRequires:  meson
@@ -20,6 +21,7 @@ BuildRequires:  systemd-devel
 BuildRequires:  pkgconfig
 
 BuildRequires:  systemd
+BuildRequires:  systemd-rpm-macros
 BuildRequires:  curl
 
 BuildRequires:  asciidoc
@@ -48,16 +50,14 @@ Tang is a small daemon for binding data to the presence of a third party.
 
 %install
 %meson_install
+install -p -D -m 0644 %{SOURCE1} %{buildroot}%{_sysusersdir}/tang.conf
 %{__mkdir_p} $RPM_BUILD_ROOT/%{_localstatedir}/db/%{name}
 
 %check
 %meson_test
 
 %pre
-getent group %{name} >/dev/null || groupadd -r %{name}
-getent passwd %{name} >/dev/null || \
-    useradd -r -g %{name} -d %{_localstatedir}/cache/%{name} -s /sbin/nologin \
-    -c "Tang Network Presence Daemon user" %{name}
+%sysusers_create_compat %{SOURCE1}
 exit 0
 
 %post
@@ -95,8 +95,12 @@ fi
 %{_bindir}/%{name}-show-keys
 %{_mandir}/man1/tang-show-keys.1*
 %{_mandir}/man1/tangd-rotate-keys.1.*
+%{_sysusersdir}/tang.conf
 
 %changelog
+* Wed Aug 17 2022 Sergio Arroutbi <sarroutb@redhat.com> - 11-3
+- Adopt systemd-sysusers format
+
 * Sat Jan 22 2022 Fedora Release Engineering <releng@fedoraproject.org> - 11-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
 
