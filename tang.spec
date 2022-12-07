@@ -1,11 +1,13 @@
 Name:           tang
 Version:        11
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Network Presence Binding Daemon
 
 License:        GPLv3+
 URL:            https://github.com/latchset/%{name}
 Source0:        https://github.com/latchset/%{name}/releases/download/v%{version}/%{name}-%{version}.tar.xz
+
+Patch: 0001-When-json_load_file-fails-report-the-error-details-i.patch
 
 BuildRequires:  gcc
 BuildRequires:  meson
@@ -97,6 +99,9 @@ fi
 %{_mandir}/man1/tangd-rotate-keys.1.*
 
 %changelog
+* Wed Dec 07 2022 Sergio Correia <scorreia@redhat.com> - 11-2
+- Report error details when json_load_file() fails
+
 * Tue Dec 14 2021 Sergio Correia <scorreia@redhat.com> - 11-1
 - New upstream release - v11.
   Resolves: CVE-2021-4076
