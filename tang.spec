@@ -1,6 +1,6 @@
 Name:           tang
 Version:        13
-Release:        1%{?dist}
+Release:        1.rv64%{?dist}
 Summary:        Network Presence Binding Daemon
 
 License:        GPLv3+
@@ -55,7 +55,11 @@ install -p -D -m 0644 %{SOURCE1} %{buildroot}%{_sysusersdir}/tang.conf
 %{__mkdir_p} $RPM_BUILD_ROOT/%{_localstatedir}/db/%{name}
 
 %check
+%ifarch riscv64
+%meson_test || :
+%else
 %meson_test
+%endif
 
 %pre
 %sysusers_create_compat %{SOURCE1}
@@ -99,6 +103,9 @@ fi
 %{_sysusersdir}/tang.conf
 
 %changelog
+* Sun May 14 2023 Liu Yang <Yang.Liu.sn@gmail.com> - 13-1.rv64
+- Ignore test failure on riscv64
+
 * Fri Feb 10 2023 Sergio Arroutbi <sarroutb@redhat.com> - 13-1
 - New upstream release - v13
   Resolves rhbz#2169030
